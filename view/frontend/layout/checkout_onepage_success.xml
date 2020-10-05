@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="order.success.additional.info">
+            <block class="Iugu\Payment\Block\Checkout\Onepage\Success\BankSlip" name="onepage.success.iugu_bs" template="Iugu_Payment::checkout/onepage/success/bank_slip.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

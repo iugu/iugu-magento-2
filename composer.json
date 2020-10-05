@@ -1,0 +1,26 @@
+{
+    "name": "iugu/payment",
+    "description": "Integration with Iugu payment gateway",
+    "require": {
+        "php": ">=7.1.0",
+        "magento/module-sales": "*",
+        "magento/module-checkout": "*",
+        "magento/module-payment": "*",
+        "magento/module-vault": "*",
+        "magento/framework": "*",
+        "netresearch/jsonmapper": "*",
+        "ext-json": "*"
+    },
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "autoload": {
+        "files": [ "registration.php" ],
+        "psr-4": {
+            "Iugu\\Payment\\": ""
+        }
+    }
+}

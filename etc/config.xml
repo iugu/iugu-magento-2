@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <iugu_payment>
+                <model>IuguPaymentFacade</model>
+                <ambient>test</ambient>
+                <account_key></account_key>
+                <test_api_key></test_api_key>
+                <production_api_key></production_api_key>
+                <use_taxvat>0</use_taxvat>
+                <street_line>1</street_line>
+                <street_number_line>2</street_number_line>
+                <street_district_line>3</street_district_line>
+                <street_complement_line>4</street_complement_line>
+                <api_uri><![CDATA[https://api.iugu.com/v1]]></api_uri>
+                <api_postfix_charge><![CDATA[/charge]]></api_postfix_charge>
+                <api_postfix_invoice_consult><![CDATA[/invoices/%id]]></api_postfix_invoice_consult>
+            </iugu_payment>
+            <iugu_cc>
+                <model>IuguPaymentCCFacade</model>
+                <active>0</active>
+                <can_order>1</can_order>
+                <!--can_authorize>1</can_authorize-->
+                <!--can_capture>1</can_capture-->
+                <!--can_void>1</can_void-->
+                <can_refund>1</can_refund>
+                <can_use_checkout>1</can_use_checkout>
+                <is_gateway>1</is_gateway>
+                <title>Credit Card</title>
+                <payment_action>order</payment_action>
+                <order_status>processing</order_status>
+                <cc_type_allowed>amex,visa,diners,mastercard</cc_type_allowed>
+                <min_installment_value>5</min_installment_value>
+                <max_installment_qty>12</max_installment_qty>
+                <installment_1>0.00</installment_1>
+                <installment_2>0.00</installment_2>
+                <installment_3>0.00</installment_3>
+                <installment_4>0.00</installment_4>
+                <installment_5>0.00</installment_5>
+                <installment_6>0.00</installment_6>
+                <installment_7>0.00</installment_7>
+                <installment_8>0.00</installment_8>
+                <installment_9>0.00</installment_9>
+                <installment_10>0.00</installment_10>
+                <installment_11>0.00</installment_11>
+                <installment_12>0.00</installment_12>
+            </iugu_cc>
+            <iugu_bs>
+                <model>IuguPaymentBSFacade</model>
+                <active>0</active>
+                <can_order>1</can_order>
+                <!--can_capture>1</can_capture-->
+                <title>Bank Slip</title>
+                <can_use_checkout>1</can_use_checkout>
+                <payment_action>order</payment_action>
+                <order_status>processing</order_status>
+                <extra_days>3</extra_days>
+            </iugu_bs>
+        </payment>
+    </default>
+</config>
