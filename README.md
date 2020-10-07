@@ -4,6 +4,13 @@ Instalação manual
 
 Baixe os arquivos para dentro da pasta: app/code/Iugu/Payment
 
+Execute os seguintes comandos na linha de comando:
+
+ bin/magento setup:upgrade
+ bin/magento setup:di:compile
+ bin/magento cache:clean
+ bin/magento setup:static-content:deploy
+
 
 Configuração
 
