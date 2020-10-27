@@ -10,6 +10,7 @@
                 <argument name="code" xsi:type="const">\Iugu\Payment\Model\Ui\ConfigProvider::CODE</argument>
                 <argument name="valueHandlerPool" xsi:type="object">IuguValueHandlerPool</argument>
                 <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+                <argument name="infoBlockType" xsi:type="string">Magento\Payment\Block\Info</argument>
             </arguments>
         </virtualType>
         <!-- Value handlers infrastructure -->
