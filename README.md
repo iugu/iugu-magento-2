@@ -24,3 +24,13 @@ Configuração
 - No painel de controle da Iugu->Configurações->Desenvolvedor->Comunicação via Gatilhos->Novo 
 - Em URL, cole: https://{{sua url}}/index.php/rest/V1/iugu-payment/invoice/event
 - Em evento, selecione: Mudança de estado de Fatura.
+
+
+
+Dicas de módulos:
+
+* Street Labels: Adiciona as labels em cada linha do endereço. Ex: Rua, número, complemento, bairro.
+https://github.com/i9-digital/magento2-street-labels
+
+* CepBrasil: Adiciona validação de CEP para o formato brasileiro.
+https://github.com/i9-digital/CepBrasil
