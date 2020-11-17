@@ -59,6 +59,10 @@ class IuguBase extends DataObject
 
         $client->setUri($uri);
 
+        $client->setConfig(array(
+            'timeout'      => 45
+        ));
+
         return $client->request();
     }
 
