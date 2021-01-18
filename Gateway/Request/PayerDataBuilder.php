@@ -4,10 +4,13 @@ namespace Iugu\Payment\Gateway\Request;
 
 use Exception;
 use Iugu\Payment\Gateway\SubjectReader;
+use Iugu\Payment\Helper\IuguHelper;
 use Magento\Checkout\Model\Cart;
 use Magento\Payment\Gateway\ConfigInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
+use Magento\Quote\Model\QuoteFactory;
+use Magento\Quote\Model\ResourceModel\Quote as QuoteRosource;
 use Zend_Filter;
 
 class PayerDataBuilder implements BuilderInterface
@@ -15,6 +18,8 @@ class PayerDataBuilder implements BuilderInterface
     const PAYER = 'payer';
 
     const EMAIL = 'email';
+
+    const IUGU_CUSTOMER_ID = 'customer_id';
 
     const TAX_VAT = 'cpf_cnpj';
 
@@ -58,16 +63,41 @@ class PayerDataBuilder implements BuilderInterface
     private $subjectReader;
 
     /**
+     * @var QuoteFactory
+     */
+    private $quoteFactory;
+
+    /**
+     * @var QuoteRosource
+     */
+    private $quoteResource;
+
+    /**
+     * @var IuguHelper
+     */
+    private $iuguHelper;
+
+    /**
      * @param ConfigInterface $config
      * @param SubjectReader $subjectReader
+     * @param QuoteFactory $quoteFactory
+     * @param QuoteRosource $quoteResource
+     * @param IuguHelper $iuguHelper
+     * @param Cart $cart
      */
     public function __construct(
         ConfigInterface $config,
         SubjectReader $subjectReader,
+        QuoteFactory $quoteFactory,
+        QuoteRosource $quoteResource,
+        IuguHelper $iuguHelper,
         Cart $cart
     ) {
         $this->config = $config;
         $this->subjectReader = $subjectReader;
+        $this->quoteFactory = $quoteFactory;
+        $this->quoteResource = $quoteResource;
+        $this->iuguHelper = $iuguHelper;
         $this->cart = $cart;
     }
 
@@ -85,18 +115,24 @@ class PayerDataBuilder implements BuilderInterface
         $payment = $paymentDO->getPayment();
         $data = $payment->getAdditionalInformation();
 
+        $quote = $this->quoteFactory->create();
+        $this->quoteResource->load($quote, $payment->getOrder()->getQuoteId());
+
         $address = $this->cart->getQuote()->getBillingAddress();
 
         $taxvat = null;
 
+        $customer = $quote->getCustomer();
+
         if ($this->config->getValue('use_taxvat')) {
-            $taxvat = Zend_Filter::filterStatic($this->cart->getQuote()->getCustomer()->getTaxvat(), 'Digits');
+            $taxvat = Zend_Filter::filterStatic($customer->getTaxvat(), 'Digits');
         } else {
             $taxvat = Zend_Filter::filterStatic($data['taxvat'], 'Digits');
         }
 
         return [
             self::EMAIL => $address->getEmail(),
+            self::IUGU_CUSTOMER_ID => $this->iuguHelper->getIuguCustomerId($customer),
             self::PAYER => [
                 self::TAX_VAT => $taxvat,
                 self::NAME => $address->getFirstname() . ' ' . $address->getLastname(),
