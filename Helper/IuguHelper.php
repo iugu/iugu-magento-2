@@ -1,7 +1,11 @@
 <?php
 namespace Iugu\Payment\Helper;
 
+use Iugu\Payment\Model\Api\IuguCustomer as IuguCustomerApi;
 use Magento\Checkout\Model\Session as CheckoutSession;
+use Magento\Customer\Model\CustomerFactory;
+use Magento\Customer\Model\ResourceModel\Customer as CustomerResource;
+use Magento\Customer\Model\ResourceModel\CustomerFactory as CustomerResourceFactory;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Pricing\Helper\Data as PricingHelper;
@@ -25,21 +29,53 @@ class IuguHelper extends AbstractHelper
     private $pricingHelper;
 
     /**
+     * @var CustomerFactory
+     */
+    private $customerFactory;
+
+    /**
+     * @var CustomerResourceFactory
+     */
+    private $customerResourceFactory;
+
+    /**
+     * @var CustomerResource
+     */
+    private $customerResource;
+
+    /**
+     * @var IuguCustomerApi
+     */
+    private $iuguCustomerApi;
+
+    /**
      * IuguHelper constructor.
      * @param Context $context
      * @param ConfigInterface $configCC
      * @param CheckoutSession $checkoutSession
      * @param PricingHelper $pricingHelper
+     * @param CustomerFactory $customerFactory
+     * @param CustomerResource $customerResource
+     * @param IuguCustomerApi $iuguCustomerApi
+     * @param CustomerResourceFactory $customerResourceFactory
      */
     public function __construct(
         Context $context,
         ConfigInterface $configCC,
         CheckoutSession $checkoutSession,
-        PricingHelper $pricingHelper
+        PricingHelper $pricingHelper,
+        CustomerFactory $customerFactory,
+        CustomerResource $customerResource,
+        CustomerResourceFactory $customerResourceFactory,
+        IuguCustomerApi $iuguCustomerApi
     ) {
         $this->configCC = $configCC;
         $this->checkoutSession = $checkoutSession;
         $this->pricingHelper = $pricingHelper;
+        $this->customerFactory = $customerFactory;
+        $this->customerResource = $customerResource;
+        $this->customerResourceFactory = $customerResourceFactory;
+        $this->iuguCustomerApi = $iuguCustomerApi;
         parent::__construct($context);
     }
 
@@ -110,5 +146,44 @@ class IuguHelper extends AbstractHelper
         }
 
         return $returnInstallmentQty;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getIuguCustomerId($customer)
+    {
+        if (!method_exists($customer, 'getDataModel')) {
+            $customerId = $customer->getId();
+            $customer = $this->customerFactory->create();
+            $this->customerResource->load($customer, $customerId);
+        }
+
+        $iuguCustomerId = $customer->getIuguId() ?? $customer->getCustomAttribute('iugu_id');
+        if (is_object($iuguCustomerId)) {
+            $iuguCustomerId = $iuguCustomerId->getValue();
+        }
+
+        if (!empty($iuguCustomerId)) {
+            return $iuguCustomerId;
+        }
+
+        $createData = [
+            'email' => $customer->getEmail(),
+            'name' => $customer->getName(),
+            'cpf_cnpj' => $customer->getTaxvat()
+        ];
+
+        $iuguCustomer = $this->iuguCustomerApi->create($createData);
+        $iuguCustomer = json_decode($iuguCustomer->getBody(), true);
+        $iuguCustomerId = $iuguCustomer['id'];
+
+        $customerData = $customer->getDataModel();
+        $customerData->setCustomAttribute('iugu_id', $iuguCustomerId);
+        $customer->updateData($customerData);
+        $customerResource = $this->customerResourceFactory->create();
+        $customerResource->saveAttribute($customer, 'iugu_id');
+
+        return $iuguCustomerId;
     }
 }
