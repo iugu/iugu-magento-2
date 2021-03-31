@@ -17,6 +17,7 @@
                 <api_uri><![CDATA[https://api.iugu.com/v1]]></api_uri>
                 <api_postfix_charge><![CDATA[/charge]]></api_postfix_charge>
                 <api_postfix_invoice_consult><![CDATA[/invoices/%id]]></api_postfix_invoice_consult>
+                <api_postfix_customer_create><![CDATA[/customers]]></api_postfix_customer_create>
             </iugu_payment>
             <iugu_cc>
                 <model>IuguPaymentCCFacade</model>

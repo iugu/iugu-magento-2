@@ -68,7 +68,7 @@ class IuguBase extends DataObject
 
     public function setBody($body)
     {
-        $this->setData(self::BODY, $body);
+        $this->setData(self::BODY, is_array($body) ? json_encode($body) : $body);
     }
 
     private function getHeaders()
